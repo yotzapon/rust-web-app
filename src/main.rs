@@ -1,15 +1,18 @@
 #![allow(unused)] // for beginning only
 
 use std::net::SocketAddr;
-use axum::response::Html;
+use axum::response::{Html, IntoResponse};
 use axum::{Router, ServiceExt};
+use axum::extract::Query;
 use axum::routing::get;
+use serde::Deserialize;
+use tracing_subscriber::fmt::format;
 
 #[tokio::main]
 async fn main() {
     let routes_hello = Router::new().route(
         "/hello",
-        get(|| async { Html("Hello <strong>World!!!</strong>") }),
+        get(handler_hello),
     );
 
     // region: -- Start Server
@@ -21,4 +24,17 @@ async fn main() {
         .await
         .unwrap();
     // endregion: -- Start Server
+}
+
+#[derive(Debug, Deserialize)]
+struct HelloParams {
+    name: Option<String>,
+}
+
+// e.g `/hello?name=thomas`
+async fn handler_hello(Query(params): Query<HelloParams>) -> impl IntoResponse {
+    println!("->> {:12} - handle_hello - {params:?}", "HANDLER");
+
+    let name = params.name.as_deref().unwrap_or("World!");
+    Html(format!("Hello <strong>{name}</strong>"))
 }
