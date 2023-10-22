@@ -11,6 +11,7 @@ use tower_http::services::ServeDir;
 use tracing_subscriber::fmt::format;
 use crate::model::ModelController;
 
+mod ctx;
 mod error;
 mod model;
 mod web;

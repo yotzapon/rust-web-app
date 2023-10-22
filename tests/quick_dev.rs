@@ -26,7 +26,6 @@ async fn quick_dev() -> Result<()> {
 			"title": "Ticket AAA"
 		}),
     );
-
     req_create_ticket.await?.print().await?;
 
     hc.do_get("/api/tickets").await?.print().await?;
